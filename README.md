@@ -1,0 +1,2 @@
+# fcookiejar
+Fasthttp CookieJar.
