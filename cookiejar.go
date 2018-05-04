@@ -148,7 +148,7 @@ func (cj *CookieJar) WriteTo(w io.Writer) (n int64, err error) {
 // This function does not delete cookies from CookieJar
 func (cj *CookieJar) WriteToRequest(r *fasthttp.Request) {
 	for _, c := range *cj {
-		r.Header.SetCookie(c.Key(), c.Value())
+		r.Header.SetCookieBytesKV(c.Key(), c.Value())
 	}
 }
 
