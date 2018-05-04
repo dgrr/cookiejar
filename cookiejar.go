@@ -2,10 +2,28 @@ package cookiejar
 
 import (
 	"io"
+	"sync"
 	"unsafe"
 
 	"github.com/erikdubbelboer/fasthttp"
 )
+
+var cookiePool = sync.Pool{
+	New: func() interface{} {
+		return &CookieJar{}
+	},
+}
+
+// AcquireCookieJar returns an empty CookieJar object from pool
+func AcquireCookieJar() *CookieJar {
+	return cookiePool.Get().(*CookieJar)
+}
+
+// ReleaseCookieJar returns CookieJar to the pool
+func ReleaseCookieJar(c *CookieJar) {
+	c.Release()
+	cookiePool.Put(c)
+}
 
 // CookieJar is container of cookies
 //
