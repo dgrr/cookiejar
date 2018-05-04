@@ -85,7 +85,7 @@ func (cj *CookieJar) SetCookie(cookie *fasthttp.Cookie) {
 	if ok {
 		fasthttp.ReleaseCookie(c)
 	}
-	(*cj)[b2s(cookie.Key())] = c
+	(*cj)[b2s(cookie.Key())] = cookie
 }
 
 // Peek peeks cookie value using key.
