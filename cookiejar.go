@@ -81,7 +81,11 @@ func setCookie(cj *CookieJar, key, value string) {
 //
 // After that you can use Peek function to get cookie value.
 func (cj *CookieJar) SetCookie(cookie *fasthttp.Cookie) {
-	(*cj)[b2s(cookie.Key())] = cookie
+	c, ok := (*cj)[b2s(cookie.Key())]
+	if ok {
+		fasthttp.ReleaseCookie(c)
+	}
+	(*cj)[b2s(cookie.Key())] = c
 }
 
 // Peek peeks cookie value using key.
@@ -120,14 +124,18 @@ func (cj *CookieJar) PeekValue(key string) []byte {
 // ResponseCookies gets all response cookies and stores it in cj.
 func (cj *CookieJar) ResponseCookies(r *fasthttp.Response) {
 	r.Header.VisitAllCookie(func(key, value []byte) {
-		cj.SetBytesKV(key, value)
+		cookie := fasthttp.AcquireCookie()
+		cookie.ParseBytes(value)
+		cj.SetCookie(cookie)
 	})
 }
 
 // RequestCookies gets all request cookies and stores it in cj.
 func (cj *CookieJar) RequestCookies(r *fasthttp.Request) {
 	r.Header.VisitAllCookie(func(key, value []byte) {
-		cj.SetBytesKV(key, value)
+		cookie := fasthttp.AcquireCookie()
+		cookie.ParseBytes(value)
+		cj.SetCookie(cookie)
 	})
 }
 
