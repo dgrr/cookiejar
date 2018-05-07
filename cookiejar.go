@@ -126,7 +126,7 @@ func (cj *CookieJar) ResponseCookies(r *fasthttp.Response) {
 	r.Header.VisitAllCookie(func(key, value []byte) {
 		cookie := fasthttp.AcquireCookie()
 		cookie.ParseBytes(value)
-		cj.SetCookie(cookie)
+		cj.Put(cookie)
 	})
 }
 
@@ -135,7 +135,7 @@ func (cj *CookieJar) RequestCookies(r *fasthttp.Request) {
 	r.Header.VisitAllCookie(func(key, value []byte) {
 		cookie := fasthttp.AcquireCookie()
 		cookie.ParseBytes(value)
-		cj.SetCookie(cookie)
+		cj.Put(cookie)
 	})
 }
 
