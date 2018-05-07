@@ -79,8 +79,8 @@ func setCookie(cj *CookieJar, key, value string) {
 
 // SetCookie sets cookie using its key.
 //
-// After that you can use Peek function to get cookie value.
-func (cj *CookieJar) SetCookie(cookie *fasthttp.Cookie) {
+// After that you can use Peek or Get function to get cookie value.
+func (cj *CookieJar) Put(cookie *fasthttp.Cookie) {
 	c, ok := (*cj)[b2s(cookie.Key())]
 	if ok {
 		fasthttp.ReleaseCookie(c)
