@@ -97,9 +97,8 @@ func (cj *CookieJar) Peek(key string) *fasthttp.Cookie {
 
 // Release releases all cookie values.
 func (cj *CookieJar) Release() {
-	for k, v := range *cj {
-		fasthttp.ReleaseCookie(v)
-		delete(*cj, k)
+	for k := range *cj {
+		cj.ReleaseCookie(k)
 	}
 }
 
@@ -151,19 +150,19 @@ func (cj *CookieJar) WriteTo(w io.Writer) (n int64, err error) {
 	return
 }
 
-// WriteToRequest writes cookies into request setting it in Cookie http header value.
+// AddToRequest adds cookies into request setting it in Cookie http header value.
 //
 // This function does not delete cookies from CookieJar
-func (cj *CookieJar) WriteToRequest(r *fasthttp.Request) {
+func (cj *CookieJar) AddToRequest(r *fasthttp.Request) {
 	for _, c := range *cj {
 		r.Header.SetCookieBytesKV(c.Key(), c.Value())
 	}
 }
 
-// WriteToResponse writes cookies into respnose setting it in Set-Cookie http header value.
+// AddToResponse adds cookies into respnose setting it in Set-Cookie http header value.
 //
 // This function does not delete cookies from CookieJar
-func (cj *CookieJar) WriteToResponse(r *fasthttp.Response) {
+func (cj *CookieJar) AddToResponse(r *fasthttp.Response) {
 	for _, c := range *cj {
 		r.Header.SetCookie(c)
 	}
