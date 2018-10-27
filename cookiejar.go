@@ -120,7 +120,7 @@ func (cj *CookieJar) PeekValue(key string) []byte {
 	return nil
 }
 
-// ResponseCookies gets all Response cookies reading Set-Cookie header.
+// ReadResponse gets all Response cookies reading Set-Cookie header.
 func (cj *CookieJar) ReadResponse(r *fasthttp.Response) {
 	r.Header.VisitAllCookie(func(key, value []byte) {
 		cookie := fasthttp.AcquireCookie()
@@ -129,8 +129,8 @@ func (cj *CookieJar) ReadResponse(r *fasthttp.Response) {
 	})
 }
 
-// RequestCookies gets all cookies from a Request reading Set-Cookie header.
-func (cj *CookieJar) RequestRequest(r *fasthttp.Request) {
+// ReadRequest gets all cookies from a Request reading Set-Cookie header.
+func (cj *CookieJar) ReadRequest(r *fasthttp.Request) {
 	r.Header.VisitAllCookie(func(key, value []byte) {
 		cookie := fasthttp.AcquireCookie()
 		cookie.ParseBytes(value)
