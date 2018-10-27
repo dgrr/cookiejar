@@ -5,7 +5,7 @@ import (
 	"sync"
 	"unsafe"
 
-	"github.com/erikdubbelboer/fasthttp"
+	"github.com/valyala/fasthttp"
 )
 
 var cookiePool = sync.Pool{
@@ -120,8 +120,8 @@ func (cj *CookieJar) PeekValue(key string) []byte {
 	return nil
 }
 
-// ResponseCookies gets all response cookies and stores it in cj.
-func (cj *CookieJar) ResponseCookies(r *fasthttp.Response) {
+// ResponseCookies gets all Response cookies reading Set-Cookie header.
+func (cj *CookieJar) ReadResponse(r *fasthttp.Response) {
 	r.Header.VisitAllCookie(func(key, value []byte) {
 		cookie := fasthttp.AcquireCookie()
 		cookie.ParseBytes(value)
@@ -129,8 +129,8 @@ func (cj *CookieJar) ResponseCookies(r *fasthttp.Response) {
 	})
 }
 
-// RequestCookies gets all request cookies and stores it in cj.
-func (cj *CookieJar) RequestCookies(r *fasthttp.Request) {
+// RequestCookies gets all cookies from a Request reading Set-Cookie header.
+func (cj *CookieJar) RequestRequest(r *fasthttp.Request) {
 	r.Header.VisitAllCookie(func(key, value []byte) {
 		cookie := fasthttp.AcquireCookie()
 		cookie.ParseBytes(value)
@@ -150,19 +150,15 @@ func (cj *CookieJar) WriteTo(w io.Writer) (n int64, err error) {
 	return
 }
 
-// AddToRequest adds cookies into request setting it in Cookie http header value.
-//
-// This function does not delete cookies from CookieJar
-func (cj *CookieJar) AddToRequest(r *fasthttp.Request) {
+// FillRequest dumps all cookies stored in cj into Request adding this values to Cookie header.
+func (cj *CookieJar) FillRequest(r *fasthttp.Request) {
 	for _, c := range *cj {
 		r.Header.SetCookieBytesKV(c.Key(), c.Value())
 	}
 }
 
-// AddToResponse adds cookies into respnose setting it in Set-Cookie http header value.
-//
-// This function does not delete cookies from CookieJar
-func (cj *CookieJar) AddToResponse(r *fasthttp.Response) {
+// FillResponse dumps all cookies stored in cj into Response adding this values to Cookie header.
+func (cj *CookieJar) FillResponse(r *fasthttp.Response) {
 	for _, c := range *cj {
 		r.Header.SetCookie(c)
 	}
